@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <style>
+        body { 
+            background: transparent; 
+            margin: 0; 
+            padding: 0;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        /* Dette er selve rammen rundt pilene. 
+           Bredden her bør matche bredden på scorebordskillet ditt i OBS 
+        */
+        .arrow-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 560px; /* Juster denne bredden i OBS for å spre pilene mer ut/inn */
+            position: relative;
+        }
+
+        .player-arrow {
+            width: 24px; /* Størrelse på pilen */
+            height: auto;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            opacity: 0; /* Skjult når ingen har støtet */
+        }
+        
+        .player-arrow.active {
+            opacity: 1;
+        }
+
+        /* Venstre pil peker mot venstre (Simen) */
+        #arrow-L {
+            transform: scaleX(-1); 
+        }
+
+        /* Høyre pil peker naturlig mot høyre (Ole Andreas) */
+        #arrow-R {
+            /* Ingen speilvending nødvendig */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="arrow-container">
+        <img id="arrow-L" class="player-arrow" src="https://koepd.github.io/assets/Player_Arrow.png">
+        
+        <img id="arrow-R" class="player-arrow" src="https://koepd.github.io/assets/Player_Arrow.png">
+    </div>
+
+    <script>
+        const firebaseConfig = { databaseURL: "https://pool-balls-60509-default-rtdb.europe-west1.firebasedatabase.app" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Lytt KUN på hvilken spiller som er aktiv
+        db.ref('activePlayer').on('value', snap => {
+            const activePlayer = snap.val() || "";
+            
+            // Oppdater venstre pil
+            document.getElementById('arrow-L').classList.toggle('active', activePlayer === 'left');
+            
+            // Oppdater høyre pil
+            document.getElementById('arrow-R').classList.toggle('active', activePlayer === 'right');
+        });
+    </script>
+</body>
+</html>
